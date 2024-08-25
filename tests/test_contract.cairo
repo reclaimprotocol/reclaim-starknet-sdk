@@ -6,10 +6,12 @@ use snforge_std::{
 use core::starknet::{ContractAddress, contract_address_const};
 use reclaim::reclaim::{IReclaimDispatcher, IReclaimSafeDispatcher, IReclaimDispatcherTrait};
 use reclaim::reclaim::{ReclaimContract, Epoch, Proof, ClaimInfo, SignedClaim, CompleteClaimData};
+use core::starknet::{get_caller_address};
 
 fn deploy_reclaim() -> (IReclaimDispatcher, ContractAddress) {
     let contract = declare("ReclaimContract").unwrap();
-    let mut constructor_calldata = array![];
+    let owner_address: ContractAddress = 0x00e119b5a62a67cd41f8782222f34f178d3ce36ea6a276aa289fc80cbd71d755;
+    let mut constructor_calldata = array![owner_address];
     let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
     let dispatcher = IReclaimDispatcher { contract_address };
 

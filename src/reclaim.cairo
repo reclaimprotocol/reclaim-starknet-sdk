@@ -78,7 +78,7 @@ pub trait IReclaim<TContractState> {
 #[starknet::contract]
 pub mod ReclaimContract {
     use core::circuit::CircuitInputs;
-use core::byte_array::ByteArrayTrait;
+    use core::byte_array::ByteArrayTrait;
     use core::array::ArrayTrait;
     use core::serde::Serde;
     use super::{Epoch, ClaimInfo, SignedClaim, CompleteClaimData, Proof, ReclaimManager, ReclaimSignature, EthAddress, Signature};
@@ -102,10 +102,10 @@ use core::byte_array::ByteArrayTrait;
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState) {
+    fn constructor(ref self: ContractState, owner_address: ContractAddress ) {
         let manager = ReclaimManager {
             id: 0,  
-            owner: get_caller_address(),
+            owner: owner_address,
             current_epoch: 0,
             epoch_count: 0,
         };
