@@ -1,7 +1,7 @@
 use core::result::ResultTrait;
 use snforge_std::{
     declare, ContractClassTrait, ContractClass, EventSpy,
-    spy_events, load, cheatcodes::storage::load_felt252, 
+    spy_events, load, cheatcodes::storage::load_felt252, start_cheat_caller_address
 };
 use core::starknet::{ContractAddress, contract_address_const};
 use reclaim::reclaim::{IReclaimDispatcher, IReclaimSafeDispatcher, IReclaimDispatcherTrait};
@@ -10,9 +10,9 @@ use core::starknet::{get_caller_address};
 
 fn deploy_reclaim() -> (IReclaimDispatcher, ContractAddress) {
     let contract = declare("ReclaimContract").unwrap();
-    let owner_address: ContractAddress = 0x00e119b5a62a67cd41f8782222f34f178d3ce36ea6a276aa289fc80cbd71d755;
-    let mut constructor_calldata = array![owner_address];
-    let (contract_address, _) = contract.deploy(@constructor_calldata).unwrap();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let mut constructor_calldata = array![owner_address.into()];
+    let (contract_address, rreclaim_factory_address) = contract.deploy(@constructor_calldata).unwrap();
     let dispatcher = IReclaimDispatcher { contract_address };
 
     (dispatcher, contract_address)
@@ -20,7 +20,9 @@ fn deploy_reclaim() -> (IReclaimDispatcher, ContractAddress) {
 
 #[test]
 fn test_valid_proof_verification() {
-    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let (reclaim_factory, reclaim_factory_address) = deploy_reclaim();
+    start_cheat_caller_address(reclaim_factory_address, owner_address);
 
     // Set up ClaimInfo
     let claim_info = reclaim_factory.create_claim_info(
@@ -69,7 +71,9 @@ fn test_valid_proof_verification() {
 #[test]
 #[should_panic(expected : "No signatures in the proof")]
 fn test_no_signatures_in_proof() {
-    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let (reclaim_factory, reclaim_factory_address) = deploy_reclaim();
+    start_cheat_caller_address(reclaim_factory_address, owner_address);
 
     // Set up ClaimInfo
     let claim_info = reclaim_factory.create_claim_info(
@@ -112,7 +116,9 @@ fn test_no_signatures_in_proof() {
 #[test]
 #[should_panic(expected : "Hashed Claim info doesn't match the Identifier")]
 fn test_corrupted_identifier() {
-    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let (reclaim_factory, reclaim_factory_address) = deploy_reclaim();
+    start_cheat_caller_address(reclaim_factory_address, owner_address);
 
     // Set up ClaimInfo
     let claim_info = reclaim_factory.create_claim_info(
@@ -161,7 +167,9 @@ fn test_corrupted_identifier() {
 #[test]
 #[should_panic(expected : "Duplicate signatures found")]
 fn test_duplicate_signatures() {
-    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let (reclaim_factory, reclaim_factory_address) = deploy_reclaim();
+    start_cheat_caller_address(reclaim_factory_address, owner_address);
 
     // Set up ClaimInfo
     let claim_info = reclaim_factory.create_claim_info(
@@ -213,7 +221,9 @@ fn test_duplicate_signatures() {
 #[test]
 #[should_panic(expected : 'Signature verification failed')]
 fn test_invalid_signature() {
-    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+    let owner_address: ContractAddress = contract_address_const::<'owner'>();
+    let (reclaim_factory, reclaim_factory_address) = deploy_reclaim();
+    start_cheat_caller_address(reclaim_factory_address, owner_address);
 
     // Set up ClaimInfo
     let claim_info = reclaim_factory.create_claim_info(
@@ -257,4 +267,16 @@ fn test_invalid_signature() {
 
     // Verify proof - should panic with "Signature verification failed"
     reclaim_factory.verify_proof(proof);
+}
+
+
+#[test]
+#[should_panic(expected : 'Caller is not the owner')]
+fn test_add_new_epoch_not_by_owner (){
+
+    let (reclaim_factory, _reclaim_factory_address) = deploy_reclaim();
+
+    let witnesses: Array<u256> = array![0x244897572368eadf65bfbc5aec98d8e5443a9072];
+    let number: u32 = 1;
+    reclaim_factory.add_new_epoch(witnesses, number);
 }
