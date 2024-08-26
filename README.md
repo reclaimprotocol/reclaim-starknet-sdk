@@ -10,12 +10,12 @@ scarb build
 scarb test 
 ```
 
-## Declaring the smart contrac
+## Declaring the smart contract
 ```bash
 starkli declare target/dev/<NAME>.json --network=sepolia --compiler-version=2.7.1
 ```
 
-## Deploying the smart contrac
+## Deploying the smart contract
 ```
 starkli deploy \
     <CLASS_HASH> \
