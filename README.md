@@ -1,4 +1,8 @@
-# Reclaim - Starknet SDK
+<div>
+    <div>
+        <img src="https://raw.githubusercontent.com/reclaimprotocol/.github/main/assets/banners/Starknet-SDK.png"  />
+    </div>
+</div>
 
 ## Build
 ```bash
