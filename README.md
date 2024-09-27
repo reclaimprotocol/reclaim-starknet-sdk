@@ -38,9 +38,10 @@ starkli invoke \
 
 ## Deployments
 
-### Sepolia Testnet
-
-https://sepolia.starkscan.co/contract/0x0765f3f940f7c59288b522a44ac0eeba82f8bf71dd03e265d2c9ba3521466b4e
+| Chain Name | Deployed Address | Explorer Link |
+|:-----------|:-----------------|:--------------|
+| Sepolia Testnet | 0x0765f3f940f7c59288b522a44ac0eeba82f8bf71dd03e265d2c9ba3521466b4e | [Link](https://sepolia.starkscan.co/contract/0x0765f3f940f7c59288b522a44ac0eeba82f8bf71dd03e265d2c9ba3521466b4e)|
+| Mainnet | 0x020a963b35ab831e46ea20d774dab2357ee10f04b2fd17d6978d3c907b72b0e4 | [Link](https://starkscan.co/contract/0x020a963b35ab831e46ea20d774dab2357ee10f04b2fd17d6978d3c907b72b0e4)|
 
 ## Contributing to Our Project
 
